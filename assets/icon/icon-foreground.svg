@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- kcal · Android 自适应图标前景：内容收缩到安全区（66%），背景用纯色 -->
+  <g transform="translate(512,512) scale(0.72) translate(-512,-512)">
+    <g transform="translate(0,-24)">
+      <ellipse cx="512" cy="868" rx="250" ry="30" fill="#5E2A0C" opacity="0.30"/>
+      <rect x="446" y="796" width="132" height="54" rx="27" fill="#F6EAD9"/>
+      <path d="M 240 552 A 272 272 0 0 0 784 552 Z" fill="#F6EAD9"/>
+      <ellipse cx="512" cy="552" rx="272" ry="56" fill="#FFF8F0"/>
+      <g stroke="#FFF8F0" stroke-width="30" stroke-linecap="round" fill="none" opacity="0.95">
+        <path d="M 384 448 C 352 404 416 366 384 316"/>
+        <path d="M 512 430 C 478 380 546 342 512 288"/>
+        <path d="M 640 448 C 608 404 672 366 640 316"/>
+      </g>
+    </g>
+  </g>
+</svg>
