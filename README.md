@@ -1,17 +1,27 @@
-# kcal
+# kcal · 热量账本
 
-A new Flutter project.
+一款本地优先的饮食记录 Flutter 应用：从食物库里挑一份吃的，填上克数记入当日，随时回看热量与三大营养素是否超标。
 
-## Getting Started
+## 功能
 
-This project is a starting point for a Flutter application.
+- **今日**：按日记录，对照热量 / 碳水 / 蛋白质 / 脂肪指标，超标会提醒
+- **记一笔**：从食物库选食物、填克数，实时预览这一份的热量
+- **改记录**：记错了点开已记的记录即可改克数、换成别的食物，或删掉
+- **可撤销**：左滑撤下记录后，底部提示可在几秒内撤销，误删也能找回
+- **食物库**：自建食物（每 100 克的千焦与三大营养素），支持拍照或相册图片
+- **指标**：设置每日热量与三大营养素目标
 
-A few resources to get you started if this is your first Flutter project:
+## 运行
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```bash
+flutter pub get
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+数据用 [sembast](https://pub.dev/packages/sembast) 存在本地（移动端文件、Web 端 IndexedDB），不上传任何数据。
+
+## 测试
+
+```bash
+flutter test
+```
