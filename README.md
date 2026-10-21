@@ -1,6 +1,24 @@
+<div align="center">
+
+<img src="assets/icon/icon.svg" width="120" alt="kcal 图标"/>
+
 # kcal · 热量账本
 
-一款本地优先的饮食记录 Flutter 应用：从食物库里挑一份吃的，填上克数记入当日，随时回看热量与三大营养素是否超标。
+本地优先的饮食记录 Flutter 应用：从食物库里挑一份吃的，填上克数记入当日，随时回看热量与三大营养素是否超标。
+
+**Android · iOS · Web · Windows**
+
+</div>
+
+## 截图
+
+| 今日 | 记一笔 | 编辑记录 |
+|---|---|---|
+| ![今日](screenshots/today.png) | ![记一笔](screenshots/add-intake.png) | ![编辑记录](screenshots/edit-entry.png) |
+
+| 食物库 | 指标 |
+|---|---|
+| ![食物库](screenshots/foods.png) | ![指标](screenshots/targets.png) |
 
 ## 功能
 
@@ -20,8 +38,17 @@ flutter run
 
 数据用 [sembast](https://pub.dev/packages/sembast) 存在本地（移动端文件、Web 端 IndexedDB），不上传任何数据。
 
-## 测试
+## 打包 APK
 
 ```bash
-flutter test
+flutter build apk --release
 ```
+
+## 测试与截图
+
+```bash
+flutter test                        # 单元与组件测试
+flutter test test/screenshots_test.dart --dart-define=screenshots=true   # 重新生成 README 截图
+```
+
+应用图标源文件在 `assets/icon/`（SVG），平台 PNG 由它渲染生成。
