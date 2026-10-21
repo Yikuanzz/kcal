@@ -81,7 +81,18 @@ ThemeData kcalTheme() {
         foregroundColor: Colors.white,
         minimumSize: const Size.fromHeight(48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        textStyle: const TextStyle(
+          // 显式指定 family：测试环境里 null family 的字形回退不可靠，
+          // 真机上缺该字体时仍会走系统回退，行为不变。
+          fontFamily: 'Microsoft YaHei',
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          fontFamilyFallback: [
+            'PingFang SC',
+            'Noto Sans SC',
+            'Source Han Sans SC',
+          ],
+        ),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
