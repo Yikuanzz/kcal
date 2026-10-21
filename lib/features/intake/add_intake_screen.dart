@@ -8,7 +8,7 @@ import '../../core/theme.dart';
 import '../../models/food.dart';
 import '../../models/intake_entry.dart';
 import '../../providers/providers.dart';
-import '../../shared/widgets/food_avatar.dart';
+import '../../shared/widgets/food_pick_tile.dart';
 import '../shell/app_shell.dart';
 
 class AddIntakeScreen extends ConsumerStatefulWidget {
@@ -102,7 +102,7 @@ class _AddIntakeScreenState extends ConsumerState<AddIntakeScreen> {
                     for (final food in visible)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-                        child: _FoodPickTile(
+                        child: FoodPickTile(
                           food: food,
                           selected: food.id == _foodId,
                           onTap: () => setState(() => _foodId = food.id),
@@ -206,58 +206,5 @@ class _AddIntakeScreenState extends ConsumerState<AddIntakeScreen> {
     await ref.read(intakesProvider.notifier).add(entry);
     if (!mounted) return;
     context.pop();
-  }
-}
-
-class _FoodPickTile extends StatelessWidget {
-  const _FoodPickTile({
-    required this.food,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final Food food;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: selected ? const Color(0xFFF8E7DC) : KcalColors.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-        side: BorderSide(
-          color: selected ? KcalColors.persimmon : KcalColors.line,
-          width: selected ? 1.4 : 1,
-        ),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              FoodAvatar(imageBase64: food.imageBase64, size: 48),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(food.name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${formatAmount(food.kcalPer100g, 0)} kcal / 100 g',
-                      style: const TextStyle(color: KcalColors.muted, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-              if (selected) const Icon(Icons.check_circle, color: KcalColors.persimmon),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
