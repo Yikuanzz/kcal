@@ -76,15 +76,23 @@ class IntakesNotifier extends AsyncNotifier<List<IntakeEntry>> {
     return ref.read(databaseProvider).getIntakes(dayKey(day));
   }
 
-  Future<void> add(IntakeEntry entry) async {
-    final database = ref.read(databaseProvider);
-    await database.addIntake(entry);
-    state = AsyncData(await _load(database));
-  }
+  Future<void> add(IntakeEntry entry) => _put(entry);
+
+  /// 改一笔：sembast 的 put 即 upsert，同 id 覆盖。
+  Future<void> save(IntakeEntry entry) => _put(entry);
+
+  /// 撤销删除：原样放回，保留原 id 与 createdAt，顺序不变。
+  Future<void> restore(IntakeEntry entry) => _put(entry);
 
   Future<void> remove(String id) async {
     final database = ref.read(databaseProvider);
     await database.deleteIntake(id);
+    state = AsyncData(await _load(database));
+  }
+
+  Future<void> _put(IntakeEntry entry) async {
+    final database = ref.read(databaseProvider);
+    await database.addIntake(entry);
     state = AsyncData(await _load(database));
   }
 

@@ -9,6 +9,7 @@ import '../../models/intake_entry.dart';
 import '../../providers/providers.dart';
 import '../../shared/widgets/metric_bar.dart';
 import '../shell/app_shell.dart';
+import 'entry_edit_sheet.dart';
 
 class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
@@ -163,7 +164,7 @@ class TodayScreen extends ConsumerWidget {
                           padding: EdgeInsets.symmetric(vertical: 36),
                           child: _Message(
                             text: '这一日还未记过食物',
-                            detail: '点右下角「记一笔」，从食物库里选一份',
+                            detail: '点右下角「记一笔」，从食物库里选一份。记错了点开记录就能改，左滑可撤下。',
                           ),
                         )
                       else
@@ -193,15 +194,7 @@ class _IntakeTile extends ConsumerWidget {
     return Dismissible(
       key: ValueKey(entry.id),
       direction: DismissDirection.endToStart,
-      confirmDismiss: (_) {
-        return confirmAction(
-          context,
-          title: '撤下这笔',
-          message: '「${entry.foodName}」${formatAmount(entry.grams, 0)} g 将从这一日除去。',
-          confirm: '撤下',
-        );
-      },
-      onDismissed: (_) => ref.read(intakesProvider.notifier).remove(entry.id),
+      onDismissed: (_) => _remove(context, ref),
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
@@ -211,34 +204,69 @@ class _IntakeTile extends ConsumerWidget {
         ),
         child: const Icon(Icons.delete_outline, color: KcalColors.over),
       ),
-      child: PaperCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    entry.foodName,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${formatAmount(entry.grams, 0)} g · 碳 ${formatAmount(entry.carb, 1)} · 蛋 ${formatAmount(entry.protein, 1)} · 脂 ${formatAmount(entry.fat, 1)}',
-                    style: const TextStyle(color: KcalColors.muted, fontSize: 13),
-                  ),
-                ],
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: () => _edit(context, ref),
+        child: PaperCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      entry.foodName,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${formatAmount(entry.grams, 0)} g · 碳 ${formatAmount(entry.carb, 1)} · 蛋 ${formatAmount(entry.protein, 1)} · 脂 ${formatAmount(entry.fat, 1)}',
+                      style: const TextStyle(color: KcalColors.muted, fontSize: 13),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Text(
-              '${formatAmount(entry.kcal, 0)} kcal',
-              style: const TextStyle(fontWeight: FontWeight.w800, color: KcalColors.persimmonDark),
-            ),
-          ],
+              Text(
+                '${formatAmount(entry.kcal, 0)} kcal',
+                style: const TextStyle(fontWeight: FontWeight.w800, color: KcalColors.persimmonDark),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  /// 点开编辑面板；面板 pop 回传原记录即表示要删掉这一笔。
+  Future<void> _edit(BuildContext context, WidgetRef ref) async {
+    final deleted = await showModalBottomSheet<IntakeEntry>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => EntryEditSheet(entry: entry),
+    );
+    if (deleted is IntakeEntry && context.mounted) {
+      _remove(context, ref);
+    }
+  }
+
+  /// 撤下一笔后给出「撤销」，误删也能找回来，不再用确认框打断。
+  void _remove(BuildContext context, WidgetRef ref) {
+    // 提示弹出时卡片可能已被卸载，回调里只能用这里捕获的 notifier，
+    // 不能再用组件的 ref。
+    final notifier = ref.read(intakesProvider.notifier);
+    notifier.remove(entry.id);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text('已撤下「${entry.foodName}」'),
+          action: SnackBarAction(
+            label: '撤销',
+            onPressed: () => notifier.restore(entry),
+          ),
+        ),
+      );
   }
 }
 
